@@ -11,7 +11,7 @@ class Comrepair extends REST_Controller {
 
 	public function __construct(){
 		parent:: __construct();
-		$this->load->library('PHPRequests');
+		//$this->load->library('PHPRequests');
 		$this->load->model('api_model');
 		
 	}

@@ -32,9 +32,7 @@ class Api_model extends CI_Model {
         notify
         INNER JOIN users ON notify.id_user = users.id_user
         INNER JOIN usertype ON users.status_user = usertype.type_user
-        INNER JOIN imagesnotify ON notify.id_noti = imagesnotify.id_noti
-        WHERE notify.id_goods = '$id'
-        ";
+        INNER JOIN imagesnotify ON notify.id_noti = imagesnotify.id_noti";
 
         $result = $this->db->query($sql);
         
