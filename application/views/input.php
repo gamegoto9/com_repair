@@ -160,10 +160,10 @@ $this->load->view('includes/header');
             opacity: 1,
             history: false
           });
-        } else {
 
           $('#form_data1').trigger('reset');
-          
+        } else {
+
           $.pnotify({
             title: 'เตือน!',
             text: posts.msg,

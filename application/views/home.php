@@ -105,7 +105,7 @@ $this->load->view('includes/header');
   function save_status(){
     console.log($('#id_goods_status').val());
 
-    var faction = "<?php echo site_url('com/update_status/'); ?>";
+    var faction = "<?php echo site_url('comrepair/update_status/'); ?>";
     var fdata = {id_goods: $("#id_goods_status").val(),status_form: $("#status_form").val()};
     $.post(faction, fdata, function(jdata) {
 

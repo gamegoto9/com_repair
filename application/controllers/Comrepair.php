@@ -1,12 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Com extends CI_Controller {
+class Comrepair extends CI_Controller {
 
    public function __construct(){
         parent::__construct();
       
-        $this->load->model("sports_model");
+        //$this->load->model("sports_model");
         $this->load->helper(array('form', 'url'));
         $this->load->database();
         $this->load->library('session');
@@ -45,15 +45,15 @@ class Com extends CI_Controller {
         $data['page'] = "0";
         $this->load->view('content_view', $data);
     }
-/*
+
     public function check_login() {
 
 
 
         $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('name', 'ชื่อ', 'required');
-        $this->form_validation->set_rules('sex', 'เพศ', 'required');
+        $this->form_validation->set_rules('name', 'Username', 'required');
+        $this->form_validation->set_rules('sex', 'Password', 'required');
 
         $this->form_validation->set_message('required', 'กรุุณาป้อน %s');
 
@@ -72,7 +72,7 @@ class Com extends CI_Controller {
             $data['sex'] = $this->input->post('sex');
 
 //            $sql = "select * from personal where username = '".$data['name']."' and password = '".$data['name']."'";
-            $query = $this->db->get_where('login_sport_2015', array('username' => $data['name'], 'password' => $data['sex']));
+            $query = $this->db->get_where('users', array('username' => $data['name'], 'password' => $data['sex']));
 
             $rowcount = $query->num_rows();
 
@@ -83,21 +83,21 @@ class Com extends CI_Controller {
 
                     $dataArray = array(
                         'user' => $data['name'],
-                        'status' => $row['status'],
-                        'name' => $row['name'],
-                        'Lid' => $row['Lid']
+                        'status' => $row['status_user'],
+                        'name' => $row['name_user'],
+                        'Lid' => $row['id_user']
                         );
 
-                    $_SESSION['Lid'] = $row['Lid'];
+                   // // $_SESSION['Lid'] = $row['Lid'];
 
-                    $this->session->set_userdata($dataArray);
-                }
+                     $this->session->set_userdata($dataArray);
+                 }
 
-//                $this->session->set_userdata($result);
+               // $this->session->set_userdata($result);
 
                 echo json_encode(array(
                     'is_successful' => TRUE,
-                    'msg' => $row['name']
+                    'msg' => "สำเร็จ"
                     ));
             } else {
                 echo json_encode(array(
@@ -107,7 +107,7 @@ class Com extends CI_Controller {
             }
         }
     }
-*/
+
     public function insert_noti(){
 
         $this->load->library('form_validation');
@@ -291,6 +291,107 @@ class Com extends CI_Controller {
             ));
 
     }
+
+}
+
+public function register(){
+    $this->load->view('regis_form');
+}
+
+public function insert_regis(){
+
+    $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('inputName', 'ชื่อ', 'required');
+        $this->form_validation->set_rules('inputMail', 'Email', 'required');
+
+        $this->form_validation->set_rules('inputPhone', 'หมายเลขโทรศัพท์', 'required');
+        $this->form_validation->set_rules('password', 'password', 'required');
+        $this->form_validation->set_rules('password_con', 'password', 'required');
+
+        $this->form_validation->set_message('required', 'กรุุณาป้อน %s');
+
+        if ($this->form_validation->run() == FALSE) {
+
+            $msg = form_error('inputName');
+            $msg.= form_error('inputMail');
+            $msg.= form_error('inputPhone');
+            $msg.= form_error('password');
+            $msg.= form_error('password_con');
+
+            echo json_encode(array(
+                'is_successful' => FALSE,
+                'msg' => $msg
+                ));
+        } else {
+
+            $data['name_user'] = $this->input->post('inputName');
+            $data['email'] = $this->input->post('inputMail');
+          
+            $data['tel'] = $this->input->post('inputPhone');
+            $data['place_noti'] = $this->input->post('place');
+            $data['username'] = $this->input->post('username');
+          
+            $data['password'] = $this->input->post('password');
+            $data['type_position'] = "เจ้าหน้าที่";
+            $data['status_user'] = "0"
+            $data['date_noti'] = date("Y-m-d H:i:s");
+            $data['status_noti'] = 1;
+            $data['id_user'] = 1;
+
+
+            $this->db->insert('notify', $data); 
+
+            $sql = "select max(id_noti) as max_id from notify";
+            $row2 = $this->db->query($sql)->row_array();
+            $max_id = $row2['max_id'] + 1;
+
+
+
+            foreach ($_FILES as $key => $value) {
+
+
+
+                $config['upload_path'] = './assets/uploads/goods_repair/';
+                $part = $config['upload_path'];
+                $config['allowed_types'] = '*';
+                $config['max_size'] = '8388608';
+                $config['overwrite'] = FALSE;
+                $config['remove_spaces'] = TRUE;
+                $config['file_name'] = $max_id;
+                $this->load->library('upload', $config);
+
+                $this->upload->initialize($config);
+
+                if (!empty($value['tmp_name']) && $value['size'] > 0) {
+                    if (!$this->upload->do_upload($key)) {
+                        $msg = $this->upload->display_errors();
+                                //echo $msg . $test2;
+                        echo json_encode(array(
+                            'is_successful' => FALSE,
+                            'msg' => $msg
+                            ));
+                    } else {
+                        $name = $this->upload->data();
+
+                        
+                        $data2['id_noti'] = $max_id;
+                        $data2['image'] = base_url() . 'assets/uploads/goods_repair/'.$name['file_name'];
+
+                        $this->db->insert('imagesnotify', $data2); 
+
+
+                        echo json_encode(array(
+                            'is_successful' => TRUE,
+                            'msg' => 'บันทึกเรียบร้อย'
+                            ));
+                    }
+                }
+//                        }
+            }
+
+
+        }
 
 }
 

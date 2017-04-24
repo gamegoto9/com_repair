@@ -38,4 +38,35 @@ class Api_model extends CI_Model {
         
         return $result;
     }
+
+
+    function login($username,$pass){
+
+        $sql = "SELECT * FROM users 
+                WHERE username = '$username' AND 
+                password = '$pass'
+                ";
+
+        $result = $this->db->query($sql);
+
+        return $result;
+
+    }
+
+    function update_fcmToken($id_user,$fcm_token){
+        $sql = "UPDATE users SET firebaseToken = '$fcm_token'
+                WHERE id_user = '$id_user'";
+
+        $result = $this->db->query($sql);
+
+        if($result > 0){
+            $sql = "SELECT * FROM users WHERE id_user = '$id_user'";
+            $result_full = $this->db->query($sql);
+
+            return $result_full;
+        }else{
+            return false;
+        }
+
+    }
 }

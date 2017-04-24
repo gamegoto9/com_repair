@@ -25,7 +25,7 @@
           <h3 class="text-center">Durable Articles</h3>
         </div>
         <div>
-        <form style="margin-bottom: 0px !important;" class="form-horizontal" name="form_data" id="form_data">
+          <form style="margin-bottom: 0px !important;" class="form-horizontal" name="form_data" id="form_data">
             <div class="content">
               <h4 class="title">Login Access</h4>
               <div class="form-group">
@@ -46,11 +46,40 @@
             <div class="foot">
 
               <button data-dismiss="modal" type="button" class="btn btn-primary" id="btn_save">Log me in</button>
+
+              <button data-dismiss="modal" type="button" class="btn btn-danger" id="btn_register" onclick="showModal2();">Register</button>
             </div>
           </form>
         </div>
       </div>
       <div class="text-center out-links"><a href="#">© 2017 Your Company</a></div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="modalShow2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-admin" >
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="myModalLabel">สมัครสมาชิก</h4>
+        </div>
+        <div class="modal-body">
+
+
+          <div id="div_show2">
+
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="save_status();">บันทึก</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">ยกเลิก</button>
+
+        </div>
+      </div>
     </div>
   </div>
 
@@ -60,13 +89,13 @@
   <script src="<?php echo base_url('assets/login/js/bootstrap.min.js');?>"></script>
   <script src="<?php echo base_url('assets/login/js/voice-recognition.js');?>"></script>
 
-    <!-- bootboxjs -->
-<script src="<?php echo base_url('assets/js/bootbox.min.js'); ?>"></script>
+  <!-- bootboxjs -->
+  <script src="<?php echo base_url('assets/js/bootbox.min.js'); ?>"></script>
 
-<!--pnotify-->
-<link href="<?php echo base_url('assets/pnotify/jquery.pnotify.default.icons.css') ?>" rel="stylesheet">
-<link href="<?php echo base_url('assets/pnotify/jquery.pnotify.default.css') ?>" rel="stylesheet">
-<script src="<?php echo base_url('assets/pnotify/jquery.pnotify.js') ?>"></script>
+  <!--pnotify-->
+  <link href="<?php echo base_url('assets/pnotify/jquery.pnotify.default.icons.css') ?>" rel="stylesheet">
+  <link href="<?php echo base_url('assets/pnotify/jquery.pnotify.default.css') ?>" rel="stylesheet">
+  <script src="<?php echo base_url('assets/pnotify/jquery.pnotify.js') ?>"></script>
 
 
   <script type="text/javascript">
@@ -74,18 +103,18 @@
         //initialize the javascript
         App.init();
 
-       $("#btn_save").click(function() {
+        $("#btn_save").click(function() {
 
 
 
-        var faction = "<?php echo site_url('site/inter2017_2/check_login'); ?>";
-        var fdata = $("#form_data").serialize();
+          var faction = "<?php echo site_url('/comrepair/check_login'); ?>";
+          var fdata = $("#form_data").serialize();
 
           
 
-            $.ajax({
-              type: 'POST',
-              url: faction,
+          $.ajax({
+            type: 'POST',
+            url: faction,
                 data: fdata, // or JSON.stringify ({name: 'jonas'}),
                 success: function(jdata) {
                  if (jdata.is_successful) {
@@ -99,9 +128,9 @@
 
                   });
 
-   
 
-                  $(window.location).attr('href', '<?php echo 'http://crruinter.crru.ac.th/bootstrap/check_user.php'; ?>');
+
+                  $(window.location).attr('href', '<?php echo site_url('/comrepair/home'); ?>');
                 } else {
 
                   $.pnotify({
@@ -118,15 +147,67 @@
               dataType: 'json'
             });
 
-            return false;
-            
-
-          });
+          return false;
 
 
+        });
 
-     });
 
-   </script>
- </body>
- </html>
+      });
+
+    function showModal2() {
+   
+      $('#div_show2').load('register/');
+      $('#modalShow2').modal('show');
+    }
+
+
+
+
+    function save_status(){
+    console.log($('#id_goods_status').val());
+
+    var faction = "<?php echo site_url('comrepair/insert_regis/'); ?>";
+
+    var fdata = $("#form_regis").serialize();
+
+    $.post(faction, fdata, function(jdata) {
+
+      if (jdata.is_successful) {
+
+        $.pnotify({
+          title: 'แจ้งให้ทราบ!',
+          text: jdata.msg,
+          type: 'success',
+          opacity: 1,
+          history: false
+
+        });
+
+         $('#modalShow2').modal('hide');
+         loadDataTableNotify();
+
+
+      } else {
+        $.pnotify({
+          title: 'แจ้งให้ทราบ!',
+          text: jdata.msg,
+          type: 'error',
+          opacity: 1,
+          history: false
+
+        });
+
+
+      }
+
+    }, 'json');
+
+
+  return false;
+}
+
+
+  </script>
+</body>
+</html>
