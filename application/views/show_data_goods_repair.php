@@ -13,6 +13,7 @@
 				<li class="thumbnail">
 					<center>
 						<br>
+
 						<img src="<?php echo $data_img['image']; ?>" class="thumbnail" style="width: 100%; height: 450px;">
 						
 					</center>

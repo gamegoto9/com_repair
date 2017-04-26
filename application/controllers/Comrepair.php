@@ -21,7 +21,12 @@ class Comrepair extends CI_Controller {
 
     public function index() {
 
-        $this->load->view('Login');
+        if($this->session->userdata('Lid')){
+            $this->load->view('home');
+        }else{
+
+            $this->load->view('Login');
+        }
     }
 
     public function inform() {
@@ -32,6 +37,11 @@ class Comrepair extends CI_Controller {
     public function home() {
 
         $this->load->view('home');
+    }
+
+    public function logout(){
+        $this->session->sess_destroy();
+        $this->load->view('Login');
     }
 
     public function loadDataTableNotify(){
@@ -167,7 +177,7 @@ class Comrepair extends CI_Controller {
 
             $sql = "select max(id_noti) as max_id from notify";
             $row2 = $this->db->query($sql)->row_array();
-            $max_id = $row2['max_id'] + 1;
+            $max_id = $row2['max_id'];
 
 
 
@@ -217,6 +227,7 @@ class Comrepair extends CI_Controller {
         }
     }
 
+
     public function data_goods_repair($id){
         $sql = "SELECT
         notify.id_noti,
@@ -245,7 +256,7 @@ class Comrepair extends CI_Controller {
         INNER JOIN users ON notify.id_user = users.id_user
         INNER JOIN usertype ON users.status_user = usertype.type_user
         INNER JOIN imagesnotify ON notify.id_noti = imagesnotify.id_noti
-        WHERE notify.id_goods = '$id'
+        WHERE notify.id_noti = '$id'
         ";
 
         $data['data'] = $this->db->query($sql)->result_array();
@@ -265,7 +276,7 @@ class Comrepair extends CI_Controller {
        $id = $this->input->post('id_goods');
        $data2['status_noti'] = $this->input->post('status_form');
 
-       $this->db->where('id_goods', $id);
+       $this->db->where('id_noti', $id);
        $this->db->update('notify', $data2); 
        $this->db->trans_complete();
         // $id = $this->input->post('id_goods');
@@ -298,6 +309,7 @@ public function register(){
     $this->load->view('regis_form');
 }
 
+
 public function insert_regis(){
 
     $this->load->library('form_validation');
@@ -306,6 +318,7 @@ public function insert_regis(){
         $this->form_validation->set_rules('inputMail', 'Email', 'required');
 
         $this->form_validation->set_rules('inputPhone', 'หมายเลขโทรศัพท์', 'required');
+        $this->form_validation->set_rules('username', 'username', 'required');
         $this->form_validation->set_rules('password', 'password', 'required');
         $this->form_validation->set_rules('password_con', 'password', 'required');
 
@@ -316,6 +329,7 @@ public function insert_regis(){
             $msg = form_error('inputName');
             $msg.= form_error('inputMail');
             $msg.= form_error('inputPhone');
+            $msg.= form_error('username');
             $msg.= form_error('password');
             $msg.= form_error('password_con');
 
@@ -326,29 +340,25 @@ public function insert_regis(){
         } else {
 
             $data['name_user'] = $this->input->post('inputName');
-            $data['email'] = $this->input->post('inputMail');
-          
-            $data['tel'] = $this->input->post('inputPhone');
-            $data['place_noti'] = $this->input->post('place');
             $data['username'] = $this->input->post('username');
-          
             $data['password'] = $this->input->post('password');
             $data['type_position'] = "เจ้าหน้าที่";
-            $data['status_user'] = "0"
-            $data['date_noti'] = date("Y-m-d H:i:s");
-            $data['status_noti'] = 1;
-            $data['id_user'] = 1;
+            $data['status_user'] = "0";
+            $data['email'] = $this->input->post('inputMail');
+            $data['tel'] = $this->input->post('inputPhone');
+            $data['upDateTime'] = date("Y-m-d H:i:s");
+           
 
 
-            $this->db->insert('notify', $data); 
+            // $this->db->insert('users', $data); 
 
-            $sql = "select max(id_noti) as max_id from notify";
-            $row2 = $this->db->query($sql)->row_array();
-            $max_id = $row2['max_id'] + 1;
+            // $sql = "select max(id_noti) as max_id from notify";
+            // $row2 = $this->db->query($sql)->row_array();
+            // $max_id = $row2['max_id'];
 
 
 
-            foreach ($_FILES as $key => $value) {
+             foreach ($_FILES as $key => $value) {
 
 
 
@@ -358,7 +368,7 @@ public function insert_regis(){
                 $config['max_size'] = '8388608';
                 $config['overwrite'] = FALSE;
                 $config['remove_spaces'] = TRUE;
-                $config['file_name'] = $max_id;
+                $config['file_name'] = $data['username'].'_profile';
                 $this->load->library('upload', $config);
 
                 $this->upload->initialize($config);
@@ -372,23 +382,21 @@ public function insert_regis(){
                             'msg' => $msg
                             ));
                     } else {
+
                         $name = $this->upload->data();
+                        $data['image'] = base_url() . 'assets/uploads/goods_repair/'.$name['file_name'];
 
-                        
-                        $data2['id_noti'] = $max_id;
-                        $data2['image'] = base_url() . 'assets/uploads/goods_repair/'.$name['file_name'];
-
-                        $this->db->insert('imagesnotify', $data2); 
+                          $this->db->insert('users', $data);
 
 
                         echo json_encode(array(
                             'is_successful' => TRUE,
-                            'msg' => 'บันทึกเรียบร้อย'
+                            'msg' => 'ลงทะเบียนเรียบร้อย'
                             ));
                     }
                 }
-//                        }
             }
+
 
 
         }
@@ -423,5 +431,7 @@ function ch() {
 
     redirect($this->session->userdata('LASTURL'));
 }
+
+
 
 }

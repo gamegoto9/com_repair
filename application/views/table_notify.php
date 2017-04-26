@@ -44,8 +44,8 @@
         <?php
       }?>
       </div></td>
-        <td><div align="left" style="width:70px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center;"><button type="button" class="btn btn-info btn-sm" onclick="showModal('<?php echo $row['id_goods']; ?>');"><i class="fa fa-user"></i></button></div></td>
-        <td><div align="left" style="width:70px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center;"><button type="button" class="btn btn-danger btn-sm" onclick="showModal2('<?php echo $row['id_goods']; ?>');"><i class="fa fa-user"></i></button></div></td>
+        <td><div align="left" style="width:70px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center;"><button type="button" class="btn btn-info btn-sm" onclick="showModal('<?php echo $row['id_noti']; ?>');"><i class="fa fa-user"></i></button></div></td>
+        <td><div align="left" style="width:70px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:center;"><button type="button" class="btn btn-danger btn-sm" onclick="showModal2('<?php echo $row['id_noti']; ?>');"><i class="fa fa-user"></i></button></div></td>
       </tr>
 
       <?php

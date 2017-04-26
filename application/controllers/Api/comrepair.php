@@ -43,7 +43,7 @@ class Comrepair extends REST_Controller {
 			$data_response = $this->api_model->update_fcmToken($id_user,$fcm_token)->result();
 
 			if($data_response){
-				$this->response($data_response,200);
+				$this->response($data_response[0],200);
 			}else{
 				$this->response(NULL,404);
 			}
@@ -57,7 +57,7 @@ class Comrepair extends REST_Controller {
 				array('error' => 'username หรือ password ไม่ถูกต้อง' )
 				);
 
-			$this->response($data,200);
+			$this->response($data[0],200);
 
 
 

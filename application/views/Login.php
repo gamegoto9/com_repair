@@ -64,7 +64,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title" id="myModalLabel">สมัครสมาชิก</h4>
+          <h4 class="modal-title" id="myModalLabel"></h4>
         </div>
         <div class="modal-body">
 
@@ -75,7 +75,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success" onclick="save_status();">บันทึก</button>
+          <button type="button" class="btn btn-success" onclick="save_regis();">บันทึก</button>
           <button type="button" class="btn btn-primary" data-dismiss="modal">ยกเลิก</button>
 
         </div>
@@ -164,45 +164,57 @@
 
 
 
-    function save_status(){
-    console.log($('#id_goods_status').val());
-
-    var faction = "<?php echo site_url('comrepair/insert_regis/'); ?>";
-
-    var fdata = $("#form_regis").serialize();
-
-    $.post(faction, fdata, function(jdata) {
-
-      if (jdata.is_successful) {
-
-        $.pnotify({
-          title: 'แจ้งให้ทราบ!',
-          text: jdata.msg,
-          type: 'success',
-          opacity: 1,
-          history: false
-
-        });
-
-         $('#modalShow2').modal('hide');
-         loadDataTableNotify();
+    function save_regis(){
 
 
-      } else {
-        $.pnotify({
-          title: 'แจ้งให้ทราบ!',
-          text: jdata.msg,
-          type: 'error',
-          opacity: 1,
-          history: false
+    var formData = new FormData($('#form_regis')[0]);
 
-        });
+    $.ajax({
+      url: "insert_regis",
+      type: 'POST',
+      data: formData,
+      mimeType: "multipart/form-data",
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function(data) {
+        //now get here response returned by PHP in JSON fomat you can parse it using JSON.parse(data)
+
+        var posts = JSON.parse(data);
+        console.log(posts);
 
 
+        if (posts.is_successful) {
+          $.pnotify({
+            title: 'แจ้งให้ทราบ!',
+            text: posts.msg,
+            type: 'success',
+            opacity: 1,
+            history: false
+          });
+
+          $('#form_regis').trigger('reset');
+          $('#modalShow2').modal('hide');
+
+        } else {
+
+          $.pnotify({
+            title: 'เตือน!',
+            text: posts.msg,
+            type: 'error',
+            opacity: 1,
+            history: false
+          });
+
+         
+        }
+
+
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        //handle here error returned
       }
-
-    }, 'json');
-
+  });
 
   return false;
 }
